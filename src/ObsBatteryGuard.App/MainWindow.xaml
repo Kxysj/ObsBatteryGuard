@@ -1,0 +1,346 @@
+<Window x:Class="ObsBatteryGuard.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="OBS 电池安全录制" Icon="Assets/app.ico" Width="1220" Height="800" MinWidth="800" MinHeight="560"
+        Style="{StaticResource {x:Type Window}}"
+        WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="CanResize"
+        Background="{StaticResource BackgroundBrush}" Loaded="Window_Loaded" Closing="Window_Closing">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="44" ResizeBorderThickness="6" GlassFrameThickness="0"
+                            CornerRadius="0" UseAeroCaptionButtons="False" NonClientFrameEdges="None"/>
+    </shell:WindowChrome.WindowChrome>
+    <Border BorderBrush="#26334A" BorderThickness="1" Background="{StaticResource BackgroundBrush}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="{StaticResource NavyBrush}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                        <ColumnDefinition Width="48"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" Margin="16,0" VerticalAlignment="Center">
+                        <Image Width="28" Height="28" Source="Assets/app-icon.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <TextBlock Text="OBS 电池安全录制" Foreground="White" FontSize="14" FontWeight="SemiBold" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Content="—" ToolTip="最小化" AutomationProperties.Name="最小化" FontSize="16" Style="{StaticResource WindowButtonStyle}" shell:WindowChrome.IsHitTestVisibleInChrome="True" Click="MinimizeButton_Click"/>
+                    <Button x:Name="MaximizeWindowButton" Grid.Column="2" Content="□" ToolTip="最大化" AutomationProperties.Name="最大化或还原" FontSize="18" Style="{StaticResource WindowButtonStyle}" shell:WindowChrome.IsHitTestVisibleInChrome="True" Click="MaximizeButton_Click"/>
+                    <Button Grid.Column="3" Content="×" ToolTip="收起到托盘（继续运行）" AutomationProperties.Name="收起到托盘" FontSize="20" Style="{StaticResource CloseWindowButtonStyle}" shell:WindowChrome.IsHitTestVisibleInChrome="True" Click="CloseButton_Click"/>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="192"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Background="{StaticResource NavyBrush}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Margin="20,24,16,18">
+                            <TextBlock Text="POWER GUARD" Foreground="#8DA0BD" FontSize="12" FontWeight="Bold"/>
+                            <TextBlock Text="无人值守保护" Foreground="White" FontSize="18" FontWeight="SemiBold" Margin="0,5,0,0"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1">
+                            <Button x:Name="DashboardNavButton" Style="{StaticResource NavButtonStyle}" Tag="Selected" Click="DashboardNav_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="▦" FontSize="18" Width="30"/>
+                                    <TextBlock Text="运行概览" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="SettingsNavButton" Style="{StaticResource NavButtonStyle}" Click="SettingsNav_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="⚙" FontSize="17" Width="30"/>
+                                    <TextBlock Text="参数设置" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="LogsNavButton" Style="{StaticResource NavButtonStyle}" Click="LogsNav_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="≡" FontSize="20" Width="30"/>
+                                    <TextBlock Text="运行日志" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="DiagnosticsNavButton" Style="{StaticResource NavButtonStyle}" Click="DiagnosticsNav_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="✓" FontSize="17" Width="30"/>
+                                    <TextBlock Text="检测与工具" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Grid.Row="2" Margin="18,0,18,20">
+                            <Border x:Name="GuardianBadge" CornerRadius="9" Background="#17273D" Padding="12,10">
+                                <StackPanel>
+                                    <TextBlock Text="后台守护" Foreground="#8DA0BD" FontSize="12"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                        <Ellipse x:Name="GuardianDot" Width="8" Height="8" Fill="{StaticResource WarningBrush}" Margin="0,0,7,0"/>
+                                        <TextBlock x:Name="GuardianStateText" Text="正在连接" Foreground="White" FontSize="13"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                            <TextBlock x:Name="AppVersionText" Foreground="#65758F" FontSize="10" Margin="6,12,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Column="1">
+                    <!-- Dashboard -->
+                    <ScrollViewer x:Name="DashboardPage" VerticalScrollBarVisibility="Auto" Visibility="Visible">
+                        <StackPanel Margin="30,26,30,32">
+                            <Grid Margin="0,0,0,22">
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="运行概览" Style="{StaticResource PageTitleStyle}"/>
+                                    <TextBlock Text="实时查看电池、OBS 和录像保护状态" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                                </StackPanel>
+                                <Border Grid.Row="1" HorizontalAlignment="Left" Margin="0,10,0,0" Background="{StaticResource AccentSoftBrush}" CornerRadius="12" Padding="14,7">
+                                    <TextBlock x:Name="HeaderStatusText" Text="正在初始化" TextWrapping="Wrap" Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold"/>
+                                </Border>
+                            </Grid>
+
+                            <Border Style="{StaticResource CardStyle}" Padding="12,8" Margin="0,0,0,16">
+                                <WrapPanel>
+                                    <Button x:Name="StartRecordButton" Content="开始安全录像" Style="{StaticResource PrimaryButtonStyle}" Click="StartRecord_Click" Margin="4,4"/>
+                                    <Button x:Name="StopRecordButton" Content="停止并保存录像" Style="{StaticResource DangerButtonStyle}" Click="StopRecord_Click" Margin="4,4"/>
+                                    <Button x:Name="SplitRecordButton" Content="立即分割" Style="{StaticResource SecondaryButtonStyle}" Click="SplitRecord_Click" Margin="4,4"/>
+                                    <Button x:Name="ConnectObsButton" Content="连接 OBS" Style="{StaticResource NeutralButtonStyle}" Click="ConnectObs_Click" Margin="4,4"/>
+                                    <Button x:Name="CancelShutdownButton" Content="取消关机倒计时" Style="{StaticResource NeutralButtonStyle}" Click="CancelShutdown_Click" IsEnabled="False" Margin="4,4"/>
+                                    <Button Content="打开录像目录" Style="{StaticResource NeutralButtonStyle}" Click="OpenRecordingFolder_Click" Margin="4,4"/>
+                                </WrapPanel>
+                            </Border>
+
+                            <UniformGrid x:Name="StatusCards" Columns="4" Margin="-5,0,-5,8">
+                                <Border Style="{StaticResource CardStyle}" Margin="5,0,5,10">
+                                    <StackPanel>
+                                        <TextBlock Text="当前电量" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                                        <TextBlock x:Name="BatteryPercentText" Text="--%" FontSize="30" FontWeight="SemiBold" Margin="0,8,0,6"/>
+                                        <ProgressBar x:Name="BatteryProgress" Minimum="0" Maximum="100" Value="0" Height="5" Foreground="{StaticResource SuccessBrush}" Background="#E8EDF4" BorderThickness="0"/>
+                                        <TextBlock x:Name="BatteryStateText" Text="等待读取" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,8,0,0" TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource CardStyle}" Margin="5,0,5,10">
+                                    <StackPanel>
+                                        <TextBlock Text="OBS 连接" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                                        <TextBlock x:Name="ObsStateText" Text="未连接" FontSize="23" FontWeight="SemiBold" Margin="0,10,0,7"/>
+                                        <TextBlock x:Name="ObsVersionText" Text="等待后台守护" FontSize="12" Foreground="{StaticResource MutedBrush}" TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource CardStyle}" Margin="5,0,5,10">
+                                    <StackPanel>
+                                        <TextBlock Text="录像状态" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                                        <TextBlock x:Name="RecordStateText" Text="未录像" FontSize="23" FontWeight="SemiBold" Margin="0,10,0,7"/>
+                                        <TextBlock x:Name="RecordDurationText" Text="00:00:00  ·  0 B" FontSize="12" Foreground="{StaticResource MutedBrush}"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource CardStyle}" Margin="5,0,5,10">
+                                    <StackPanel>
+                                        <TextBlock Text="保护策略" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                                        <TextBlock x:Name="ProtectionText" Text="已启用" FontSize="23" FontWeight="SemiBold" Margin="0,10,0,7"/>
+                                        <TextBlock x:Name="ThresholdText" Text="20% 停止 · 10% 紧急" FontSize="12" Foreground="{StaticResource MutedBrush}"/>
+                                    </StackPanel>
+                                </Border>
+                            </UniformGrid>
+
+                            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,18">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="保护运行状态" Style="{StaticResource SectionTitleStyle}"/>
+                                    <Grid Grid.Row="1" Margin="0,3,0,18">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="76"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Width="58" Height="58" CornerRadius="18" Background="{StaticResource AccentSoftBrush}" HorizontalAlignment="Left">
+                                            <TextBlock x:Name="PhaseIconText" Text="…" Foreground="{StaticResource AccentBrush}" FontSize="26" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock x:Name="PhaseText" Text="正在启动后台守护" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                            <TextBlock x:Name="PhaseDetailText" Text="完成后会自动连接 OBS" Foreground="{StaticResource MutedBrush}" FontSize="13" Margin="0,5,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid Grid.Row="2" Margin="0,0,0,16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="预计剩余" Style="{StaticResource InputLabelStyle}"/>
+                                            <TextBlock x:Name="BatteryRemainingText" Text="未知" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="下次分割" Style="{StaticResource InputLabelStyle}"/>
+                                            <TextBlock x:Name="NextSplitText" Text="未安排" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="电源动作" Style="{StaticResource InputLabelStyle}"/>
+                                            <TextBlock x:Name="ShutdownText" Text="未安排" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Border Grid.Row="3" Background="#F7F9FC" CornerRadius="8" Padding="12">
+                                        <TextBlock x:Name="OutputPathText" Text="尚未获得录像文件路径" Foreground="{StaticResource MutedBrush}" TextTrimming="CharacterEllipsis" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+
+                            <Border x:Name="MessageBorder" Style="{StaticResource CardStyle}" Background="#F8FAFD" Padding="16" Margin="0,0,0,18">
+                                <Grid>
+                                    <TextBlock Text="最近动作" Foreground="{StaticResource MutedBrush}" FontSize="12" VerticalAlignment="Top"/>
+                                    <TextBlock x:Name="LastActionText" Text="等待后台守护启动" Margin="82,0,0,0" TextWrapping="Wrap"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Settings: category navigation and fluid forms; save remains visible. -->
+                    <Grid x:Name="SettingsPage" Visibility="Collapsed" Margin="24,20,24,20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="参数设置" Style="{StaticResource PageTitleStyle}"/>
+                                <TextBlock Text="按功能调整参数 · 所有修改统一保存" Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                        <WrapPanel x:Name="SettingsTabs" Grid.Row="1" Margin="0,0,0,12"/>
+                        <ScrollViewer x:Name="SettingsScrollViewer" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,8,0">
+                            <StackPanel x:Name="SettingsForm"/>
+                        </ScrollViewer>
+                        <Border Grid.Row="3" Padding="16,12" Margin="0,12,0,0" Background="White" BorderBrush="{StaticResource LineBrush}" BorderThickness="1" CornerRadius="10">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <TextBlock x:Name="SettingsNoticeText" Text="尚未修改参数" TextWrapping="Wrap" MaxHeight="58" TextTrimming="CharacterEllipsis" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                                <Button x:Name="SaveSettingsButton" Grid.Column="1" Content="保存全部设置" Style="{StaticResource PrimaryButtonStyle}" Width="136" Click="SaveSettings_Click"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- Logs -->
+                    <Grid x:Name="LogsPage" Visibility="Collapsed" Margin="30,24,30,30">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid>
+                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="运行日志" Style="{StaticResource PageTitleStyle}"/>
+                                <TextBlock Text="日志采用追加写入，关键事件立即刷新到磁盘" Foreground="{StaticResource MutedBrush}" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <WrapPanel Grid.Row="1" Margin="0,12,0,0">
+                                <Button Content="刷新" Style="{StaticResource NeutralButtonStyle}" Width="82" Click="RefreshLogs_Click"/>
+                                <Button Content="打开易读日志" Style="{StaticResource SecondaryButtonStyle}" Width="118" Margin="10,0,0,0" Click="OpenReadableLog_Click"/>
+                                <Button Content="打开目录" Style="{StaticResource SecondaryButtonStyle}" Width="102" Margin="10,0,0,0" Click="OpenLogFolder_Click"/>
+                                <Button Content="导出完整日志" Style="{StaticResource NeutralButtonStyle}" Margin="10,0,0,0" Click="ExportLogs_Click"/>
+                            </WrapPanel>
+                            <WrapPanel Grid.Row="2" Margin="0,12,0,0">
+                                <CheckBox x:Name="FollowLogsCheck" Content="实时跟随（取消后暂停刷新）" IsChecked="True" VerticalAlignment="Center"/>
+                                <CheckBox x:Name="ProblemLogsCheck" Content="仅警告 / 错误" Margin="12,0" VerticalAlignment="Center" Checked="LogFilter_Changed" Unchecked="LogFilter_Changed"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="搜索事件" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource MutedBrush}"/>
+                                    <TextBox x:Name="LogSearchText" Width="200" ToolTip="搜索最近 1200 行中的完整日志事件" TextChanged="LogSearch_Changed"/>
+                                </StackPanel>
+                            </WrapPanel>
+                        </Grid>
+                        <Border Grid.Row="1" Background="#EAF0FF" CornerRadius="8" Padding="12,8" Margin="0,18,0,12">
+                            <TextBlock x:Name="LogPathText" Foreground="{StaticResource AccentBrush}" TextTrimming="CharacterEllipsis"/>
+                        </Border>
+                        <Border Grid.Row="2" Background="#0D1524" CornerRadius="12" Padding="16">
+                            <TextBox x:Name="LogTextBox" IsReadOnly="True" AcceptsReturn="True" VerticalContentAlignment="Top" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="Transparent" BorderThickness="0" Foreground="#C7D2E4" FontFamily="Cascadia Mono, Consolas" FontSize="13"/>
+                        </Border>
+                    </Grid>
+
+                    <!-- Diagnostics -->
+                    <ScrollViewer x:Name="DiagnosticsPage" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="30,24,30,30">
+                            <TextBlock Text="检测与工具" Style="{StaticResource PageTitleStyle}"/>
+                            <TextBlock Text="在正式无人值守录制前完成一次自检和安全演练" Foreground="{StaticResource MutedBrush}" Margin="0,5,0,22"/>
+                            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,18">
+                                <StackPanel>
+                                    <TextBlock Text="实机验收预检（只读）" Style="{StaticResource SectionTitleStyle}"/>
+                                    <TextBlock Text="检查真实电池、后台版本、OBS 和 Windows 电源策略。检查过程不会操作录像或关机；报告可导出到目标笔记本的验收记录。" TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,12"/>
+                                    <WrapPanel>
+                                        <Button x:Name="PreflightButton" Content="运行只读预检" Style="{StaticResource SecondaryButtonStyle}" Click="Preflight_Click"/>
+                                        <Button x:Name="ExportPreflightButton" Content="导出预检报告" IsEnabled="False" Margin="10,0,0,0" Style="{StaticResource NeutralButtonStyle}" Click="ExportPreflight_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,9,18">
+                                    <StackPanel>
+                                        <TextBlock Text="系统自检" Style="{StaticResource SectionTitleStyle}"/>
+                                        <TextBlock Text="检查电池、OBS、MKV、磁盘、自动分割与后台保护配置。" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                                        <Button Content="运行配置与连接检查" Style="{StaticResource PrimaryButtonStyle}" Click="SelfCheck_Click"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="9,0,0,18">
+                                    <StackPanel>
+                                        <TextBlock Text="安全停止演练" Style="{StaticResource SectionTitleStyle}"/>
+                                        <TextBlock Text="演练会停止当前录像并等待写入；演练本身不安排关机，真实低电量保护仍然有效。" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                                        <Button Content="开始安全演练" Style="{StaticResource DangerButtonStyle}" Click="SafetyTest_Click"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,18">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="MKV 格式保护" Style="{StaticResource SectionTitleStyle}"/>
+                                        <TextBlock x:Name="FormatStatusText" Text="尚未检查当前 OBS 配置" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"/>
+                                        <TextBlock Text="一键设置要求先停止录像并完全退出 OBS；修改前会自动备份 basic.ini。" TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="0,8,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Button Content="检查格式" Style="{StaticResource NeutralButtonStyle}" Width="100" Click="InspectMkv_Click"/>
+                                        <Button Content="一键设置 MKV" Style="{StaticResource SecondaryButtonStyle}" Width="128" Margin="10,0,0,0" Click="EnsureMkv_Click"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,18">
+                                <StackPanel>
+                                    <TextBlock Text="检测结果" Style="{StaticResource SectionTitleStyle}"/>
+                                    <TextBlock x:Name="CheckResultText" Text="点击上方按钮开始检测。" FontFamily="Cascadia Mono, Microsoft YaHei UI" TextWrapping="Wrap" LineHeight="24"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource CardStyle}">
+                                <StackPanel>
+                                    <TextBlock Text="本机数据位置" Style="{StaticResource SectionTitleStyle}"/>
+                                    <TextBlock Text="配置文件" Style="{StaticResource InputLabelStyle}"/>
+                                    <TextBlock x:Name="ConfigPathText" TextWrapping="Wrap"/>
+                                    <TextBlock Text="后台守护程序" Style="{StaticResource InputLabelStyle}" Margin="0,14,0,6"/>
+                                    <TextBlock x:Name="GuardPathText" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

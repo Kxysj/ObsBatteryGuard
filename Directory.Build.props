@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <Version>1.0.17</Version>
+    <Authors>OBS Battery Guard</Authors>
+    <Product>OBS 电池安全录制</Product>
+    <Copyright>Copyright © 2026</Copyright>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+</Project>

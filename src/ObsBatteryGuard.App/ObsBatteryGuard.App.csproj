@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>OBS电池安全录制</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Using Remove="System.Drawing" />
+    <Using Remove="System.Windows.Forms" />
+    <Resource Include="Assets\*.ico" />
+    <Resource Include="Assets\app-icon.png" />
+    <ProjectReference Include="..\ObsBatteryGuard.Core\ObsBatteryGuard.Core.csproj" />
+    <ProjectReference Include="..\ObsBatteryGuard.Guard\ObsBatteryGuard.Guard.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+</Project>

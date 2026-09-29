@@ -1,0 +1,36 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObsBatteryGuard.Core", "src\ObsBatteryGuard.Core\ObsBatteryGuard.Core.csproj", "{4A398429-2C8F-4C44-9AA1-3FDF546A2341}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObsBatteryGuard.Guard", "src\ObsBatteryGuard.Guard\ObsBatteryGuard.Guard.csproj", "{03D11B69-EF8A-4E17-82A1-4C40C25A85DD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObsBatteryGuard.App", "src\ObsBatteryGuard.App\ObsBatteryGuard.App.csproj", "{C45BF17A-6D55-4199-AC55-F0D28A7A04D2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObsBatteryGuard.Smoke", "tests\ObsBatteryGuard.Smoke\ObsBatteryGuard.Smoke.csproj", "{5EC715BC-8554-4B9C-BF52-9B23D9E9105B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A398429-2C8F-4C44-9AA1-3FDF546A2341}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A398429-2C8F-4C44-9AA1-3FDF546A2341}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A398429-2C8F-4C44-9AA1-3FDF546A2341}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A398429-2C8F-4C44-9AA1-3FDF546A2341}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03D11B69-EF8A-4E17-82A1-4C40C25A85DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03D11B69-EF8A-4E17-82A1-4C40C25A85DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03D11B69-EF8A-4E17-82A1-4C40C25A85DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03D11B69-EF8A-4E17-82A1-4C40C25A85DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C45BF17A-6D55-4199-AC55-F0D28A7A04D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C45BF17A-6D55-4199-AC55-F0D28A7A04D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C45BF17A-6D55-4199-AC55-F0D28A7A04D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C45BF17A-6D55-4199-AC55-F0D28A7A04D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EC715BC-8554-4B9C-BF52-9B23D9E9105B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EC715BC-8554-4B9C-BF52-9B23D9E9105B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EC715BC-8554-4B9C-BF52-9B23D9E9105B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EC715BC-8554-4B9C-BF52-9B23D9E9105B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
